@@ -1,7 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "PowerShell(& \"venv\\\\Scripts\\\\python.exe\" -c \"from mcp.server.fastmcp import FastMCP; print\\('FastMCP ok'\\)\" 2>&1)"
-    ]
-  }
-}
