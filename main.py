@@ -83,7 +83,7 @@ def main() -> None:
 
     print("Loading database schema...")
     schema_context = build_schema_context()
-    print("NBA Stats Assistant ready. Ask anything (type 'quit' to exit).\n")
+    print("Ask-Me-Anything-Assistant ready (type 'quit' to exit).\n")
 
     while True:
         try:

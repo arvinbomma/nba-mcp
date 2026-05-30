@@ -1,4 +1,5 @@
 import os
+import urllib.request
 import psycopg2
 from dotenv import load_dotenv
 from nba_api.stats.endpoints import leaguedashplayerstats
@@ -61,6 +62,42 @@ def load_into_db(df):
         conn.close()
 
 
+NORTHWIND_URL = (
+    "https://raw.githubusercontent.com/pthom/northwind_psql/master/northwind.sql"
+)
+
+
+def load_northwind():
+    database_url = os.getenv("DATABASE_URL")
+    if not database_url:
+        raise RuntimeError("DATABASE_URL is not set in .env")
+
+    print("Downloading Northwind dataset...")
+    with urllib.request.urlopen(NORTHWIND_URL) as response:
+        sql = response.read().decode("utf-8")
+
+    conn = psycopg2.connect(database_url)
+    try:
+        with conn:
+            with conn.cursor() as cur:
+                # Remove comment-only lines so they don't produce phantom statements
+                sql_lines = [
+                    line for line in sql.splitlines()
+                    if not line.strip().startswith("--")
+                ]
+                cleaned_sql = "\n".join(sql_lines)
+                count = 0
+                for stmt in cleaned_sql.split(";"):
+                    stmt = stmt.strip()
+                    if stmt and not stmt.startswith("--"):
+                        cur.execute(stmt)
+                        count += 1
+        print(f"Northwind dataset loaded ({count} statements executed).")
+    finally:
+        conn.close()
+
+
 if __name__ == "__main__":
     df = fetch_player_stats()
     load_into_db(df)
+    load_northwind()

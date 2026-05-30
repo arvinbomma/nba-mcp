@@ -61,7 +61,7 @@ def get_schema(table_name: str) -> str:
 def run_query(sql: str) -> str:
     """Execute a read-only SQL query and return results as a formatted string."""
     sql_stripped = sql.strip().upper()
-    if not sql_stripped.startswith("SELECT"):
+    if not (sql_stripped.startswith("SELECT") or sql_stripped.startswith("WITH")):
         return "Error: only SELECT queries are allowed."
 
     with get_conn() as conn:
